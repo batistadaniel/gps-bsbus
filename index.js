@@ -26,10 +26,13 @@ app.use("/veiculos", async (req, res) => {
     const [data, hora] = dataHora.split(" ");
     const [dataProgramada, horaProgramada] = dataHoraProgramada.split(" ");
 
+    const [ano, mes, dia] = data.split("-");
+    const dataBR = `${dia}/${mes}/${ano}`;
+
     return {
       prefixo: veiculo.properties.prefixo,
       // data_hora: veiculo.properties.datalocal,
-      data,
+      data: dataBR,
       hora,
       dataProgramada,
       horaProgramada,
