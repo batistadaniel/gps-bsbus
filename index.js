@@ -40,7 +40,7 @@ app.use("/veiculos", async (req, res) => {
   const fim = performance.now().toFixed(2);
 
   res.json({
-    tempo_execucao: `Tempo de execução: ${fim - inicio} ms`,
+    tempo_execucao: `Tempo de execução: ${(fim - inicio).toFixed(2)} ms`,
     veiculos: veiculosFormatados
   });
 });
