@@ -21,19 +21,23 @@ app.use("/veiculos", async (req, res) => {
 
   const veiculosFormatados = data.features.map((veiculo) => {
     const dataHora = veiculo.properties.datalocal;
+    const dataHoraProgramada = veiculo.properties.sentido;
 
     const [data, hora] = dataHora.split(" ");
+    const [dataProgramada, horaProgramada] = dataHoraProgramada.split(" ");
 
     return {
       prefixo: veiculo.properties.prefixo,
       // data_hora: veiculo.properties.datalocal,
       data,
       hora,
+      dataProgramada,
+      horaProgramada,
       sentido: veiculo.properties.velocidade == 0 ? "Ida" : "Volta",
       linha: veiculo.properties.cd_linha,
       latitude: veiculo.properties.latitude,
       longitude: veiculo.properties.longitude,
-      programacao: veiculo.properties.sentido
+      // programacao: veiculo.properties.sentido
     };
   });
 
@@ -41,6 +45,7 @@ app.use("/veiculos", async (req, res) => {
 
   res.json({
     tempo_execucao: `Tempo de execução: ${(fim - inicio).toFixed(2)} ms`,
+    veiculos_total: veiculosFormatados.length,
     veiculos: veiculosFormatados
   });
 });
