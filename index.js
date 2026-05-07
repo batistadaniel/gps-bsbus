@@ -53,7 +53,68 @@ app.use("/veiculos", async (req, res) => {
   });
 });
 
+app.use("/itinerario/:linha", async (req, res) => {
+  try {
+    const { linha } = req.params;
+
+    // 1. Buscar rotas
+    const routesRes = await fetch("https://mobilibus.com/api/routes?origin=web&project_id=313");
+    const routes = await routesRes.json();
+
+    // 2. Encontrar a linha pelo shortName
+    const route = routes.find(r => r.shortName === linha);
+
+    if (!route) {
+      return res.status(404).json({ erro: "Linha não encontrada" });
+    }
+
+    const routeId = route.routeId;
+
+    // 3. Buscar timetable
+    const timetableRes = await fetch(
+      `https://mobilibus.com/api/timetable?origin=web&v=2&project_id=313&route_id=${routeId}`
+    );
+    const timetableData = await timetableRes.json();
+
+    const trips = timetableData.timetable?.trips || [];
+
+    if (trips.length === 0) {
+      return res.status(404).json({ erro: "Nenhum itinerário encontrado" });
+    }
+
+    // 4. Buscar detalhes de cada trip
+    const detalhesTrips = await Promise.all(
+      trips.map(async (trip) => {
+        const tripRes = await fetch(
+          `https://mobilibus.com/api/trip-details?origin=web&v=2&trip_id=${trip.tripId}`
+        );
+        const tripData = await tripRes.json();
+
+        return {
+          tripId: trip.tripId,
+          directionId: trip.directionId,
+          nome: tripData.tripName,
+          shape: tripData.shape,
+          stops: tripData.stops
+        };
+      })
+    );
+
+    // 5. Retornar tudo organizado
+    return res.json({
+      linha: route.shortName,
+      nome: route.longName,
+      price: route.price,
+      itinerarios: detalhesTrips
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ erro: "Erro interno" });
+  }
+});
+
 // iniciando o servidor na porta 3000
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta http://localhost:${PORT}/veiculos`);
+  console.log(`Servidor rodando na porta http://localhost:${PORT}`);
 });
