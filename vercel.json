@@ -1,3 +1,4 @@
+
 {
   "version": 2,
   "regions": ["gru1"],
@@ -15,6 +16,5 @@
   ],
   "env": {
     "PORT": "3000"
-  },
-  "public": true
+  }
 }
