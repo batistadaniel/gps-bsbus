@@ -38,7 +38,7 @@ app.use("/veiculos", async (req, res) => {
       horaProgramada,
       sentido: veiculo.properties.velocidade == 0 ? "Ida" : "Volta",
       linha: veiculo.properties.cd_linha,
-      direcao: veiculo.properties.direcao,
+      direcao: veiculo.properties.direcao, // adicionando comentario na linha da propriedade direcao pra ver se funciona em producao
       latitude: veiculo.properties.latitude,
       longitude: veiculo.properties.longitude,
       // programacao: veiculo.properties.sentido
